@@ -92,11 +92,11 @@ int main(int argc, char* argv[]) {
   }
 
   FILE * f = fopen(argv[1], "r");
-  char s[255];
+  char s[100];
 
   int result = 0;
   do {
-    fscanf(f, "%s\n", s);
+    fscanf(f, "%99s\n", s);
     result += (mode == 1) ? calibration_value_mode1(s) : calibration_value_mode2(s);
   } while (!feof(f));
 
