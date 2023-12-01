@@ -19,5 +19,5 @@ cppcheck: 01.c
 pvs-studio: 01.c
 	cc -E 01.c -o 01.i
 	rm -f ../pvs-studio-output.txt
-	pvs-studio --preprocessor=clang --rules-config=../.pvsconfig --source-file *.c --i-file *.i --lic-file ~/.config/PVS-Studio/PVS-Studio.lic --output-file=../pvs-studio-output.txt
+	pvs-studio --preprocessor=clang --source-file *.c --i-file *.i --lic-file ~/.config/PVS-Studio/PVS-Studio.lic --output-file=../pvs-studio-output.txt
 	plog-converter -a 'GA;OP;CS;OWASP' -t html -o ../pvs-studio-report.html ../pvs-studio-output.txt
