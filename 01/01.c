@@ -4,7 +4,7 @@
 #include <string.h>
 
 
-int calibration_value_mode1(char * s) {
+int calibration_value_mode1(const char * s) {
   int l = strlen(s);
 
   int i = 0;
@@ -30,7 +30,7 @@ const char * NUMBERS[] = {
 };
 
 
-int str_digit(char * s) {
+int str_digit(const char * s) {
   for(int i=0; i<9; i++) {
     if ( strncmp(NUMBERS[i], s, strlen(NUMBERS[i])) == 0 ) {
       return i + 1;
@@ -41,7 +41,7 @@ int str_digit(char * s) {
 }
 
 
-int calibration_value_mode2(char * s) {
+int calibration_value_mode2(const char * s) {
   int l = strlen(s);
 
   int i = 0;
@@ -80,7 +80,7 @@ int calibration_value_mode2(char * s) {
 }
 
 
-int main(int argc, char* argv[]) {
+int main(int argc, const char* argv[]) {
   if (argc < 2) {
     printf("Usage: %s input.txt\n", argv[0]);
     return 1;
