@@ -92,6 +92,11 @@ int main(int argc, const char* argv[]) {
   }
 
   FILE * f = fopen(argv[1], "r");
+  if (f == NULL) {
+    printf("Error opening file: %s\n", argv[1]);
+    return 2;
+  }
+
   char s[100];
 
   int result = 0;
