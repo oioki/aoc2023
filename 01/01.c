@@ -82,7 +82,7 @@ int calibration_value_mode2(const char * s) {
 
 int main(int argc, const char* argv[]) {
   if (argc < 2) {
-    printf("Usage: %s input.txt\n", argv[0]);
+    printf("Usage: %s input.txt [mode]\n", argv[0]);
     return 1;
   }
 
