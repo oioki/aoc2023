@@ -9,20 +9,16 @@ int game_output(const char * s, int red_asked, int green_asked, int blue_asked, 
     int bytes_read;
     int num;
 
-    char * cur = s + 5;  // skip len("Game ")
+    const char * cur = s + 5;  // skip len("Game ")
 
-    int red_in_tuple;
-    int green_in_tuple;
-    int blue_in_tuple;
     int red_max = 0, green_max = 0, blue_max = 0;
 
     sscanf(cur, "%d%n", &game_number, &bytes_read);
     cur += bytes_read + 2;  // skip the number of bytes for the game number and also ": "
 
-
     while (1) {
         // reading new tuple at this point
-        red_in_tuple = green_in_tuple = blue_in_tuple = 0;
+        int red_in_tuple = 0, green_in_tuple = 0, blue_in_tuple = 0;
 
         while (1) {
             sscanf(cur, "%d%n", &num, &bytes_read);
@@ -108,8 +104,7 @@ int main(int argc, const char* argv[]) {
 
   int result = 0;
   while (!feof(f)) {
-    int p = fgets(s, 199, f);
-    if (p == NULL) {
+    if (fgets(s, 199, f) == NULL) {
         break;
     }
     result += game_output(s, red, green, blue, mode);
