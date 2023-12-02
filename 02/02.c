@@ -1,7 +1,5 @@
-// #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 
 int game_output(const char * s, int red_asked, int green_asked, int blue_asked, int mode) {
