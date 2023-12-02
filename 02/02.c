@@ -2,36 +2,36 @@
 #include <stdlib.h>
 
 
-int game_output(const char * s, int red_asked, int green_asked, int blue_asked, int mode) {
+int game_output(const char * s, const int * colors_asked, int mode) {
     int game_number = 0;
     int bytes_read;
     int num;
 
     const char * cur = s + 5;  // skip len("Game ")
 
-    int red_max = 0, green_max = 0, blue_max = 0;
+    int colors_max[3] = {0, 0, 0};
 
     sscanf(cur, "%d%n", &game_number, &bytes_read);
     cur += bytes_read + 2;  // skip the number of bytes for the game number and also ": "
 
     while (1) {
         // reading new tuple at this point
-        int red_in_tuple = 0, green_in_tuple = 0, blue_in_tuple = 0;
+        int colors_in_tuple[3] = {0, 0, 0};
 
         while (1) {
             sscanf(cur, "%d%n", &num, &bytes_read);
             cur += bytes_read + 1;  // skip " " after number
 
             if (*cur == 'r') {
-                red_in_tuple = num;
+                colors_in_tuple[0] = num;
                 cur += 3;  // assume it's "red" and skip len("red")
             }
             if (*cur == 'g') {
-                green_in_tuple = num;
+                colors_in_tuple[1] = num;
                 cur += 5;  // len("green")
             }
             if (*cur == 'b') {
-                blue_in_tuple = num;
+                colors_in_tuple[2] = num;
                 cur += 4;  // len("blue")
             }
             if ((*cur == '\0') || (*cur == '\n')) {
@@ -46,32 +46,29 @@ int game_output(const char * s, int red_asked, int green_asked, int blue_asked, 
             }
         }
 
-        // printf("%d %d %d <=> %d %d %d\n", red_in_tuple, green_in_tuple, blue_in_tuple, red_asked, green_asked, blue_asked);
+        // printf("%d %d %d <=> %d %d %d\n", colors_in_tuple[0], colors_in_tuple[1], colors_in_tuple[2], colors_asked[0], colors_asked[1], colors_asked[2]);
 
-        if (red_in_tuple > red_max) {
-            red_max = red_in_tuple;
-        }
-        if (green_in_tuple > green_max) {
-            green_max = green_in_tuple;
-        }
-        if (blue_in_tuple > blue_max) {
-            blue_max = blue_in_tuple;
-        }
-
-        if ( mode == 1 )
-        {
-            if ( (red_in_tuple > red_asked) || (green_in_tuple > green_asked) || (blue_in_tuple > blue_asked) )
-            {
-                return 0;
+        if ( mode == 1 ) {
+            for (int i=0; i<3; i++) {
+                if ( colors_in_tuple[i] > colors_asked[i] ) return 0;
             }
         }
+
+        if ( mode == 2 ) {
+            for (int i=0; i<3; i++) {
+                if (colors_in_tuple[i] > colors_max[i]) {
+                    colors_max[i] = colors_in_tuple[i];
+                }
+            }
+        }
+
         if ((*cur == '\0') || (*cur == '\n')) {
             break;
         }
     }
 
-    // printf("set of cubes = %d %d %d\n", red_max, green_max, blue_max);
-    if ( mode == 2 ) return red_max * green_max * blue_max;
+    // printf("set of cubes = %d %d %d\n", colors_max[0], colors_max[1], colors_max[2]);
+    if ( mode == 2 ) return colors_max[0] * colors_max[1] * colors_max[2];
 
     return game_number;
 }
@@ -89,9 +86,11 @@ int main(int argc, const char* argv[]) {
     return 2;
   }
 
-  int red = atoi(argv[2]);
-  int green = atoi(argv[3]);
-  int blue = atoi(argv[4]);
+  const int colors_asked[3] = {
+    atoi(argv[2]),
+    atoi(argv[3]),
+    atoi(argv[4])
+  };
 
   int mode = 1;
   if (argc > 5) {
@@ -105,7 +104,7 @@ int main(int argc, const char* argv[]) {
     if (fgets(s, 199, f) == NULL) {
         break;
     }
-    result += game_output(s, red, green, blue, mode);
+    result += game_output(s, colors_asked, mode);
   };
 
   printf("Answer: %d\n", result);
