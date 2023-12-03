@@ -24,6 +24,57 @@ int is_adjacent_to_symbol(int i0, int j0, int l) {
     return 0;
 }
 
+typedef struct gear {
+    int i;
+    int j;
+    int num;
+} gear;
+
+const int MAX_GEARS = 500;
+gear gears[MAX_GEARS];
+int num_gears = 0;
+
+int specific_gear_ratio(int num, int i, int j) {
+    // try to find the same gear
+    // O(num_gears) is suboptimal but works fine so far
+    for (int k=0; k<num_gears; k++) {
+        if ((gears[k].i == i) && (gears[k].j == j)) {
+            // return product once the second number for the gear is found
+            // it is guaranteed that there are only 2 max numbers for a gear
+            return gears[k].num * num;
+        }
+    }
+
+    gear g = {i, j, num};
+    gears[num_gears] = g;
+    num_gears++;
+
+    if (num_gears > MAX_GEARS) {
+        printf("Gear storage overflow!\n");
+        exit(3);
+    }
+
+    return 0;
+}
+
+int gear_ratio_if_second_adjacent_number(int i0, int j0, int l, int num) {
+    int i, j;
+    for (i=i0-1; i<=i0+1; i++) {
+        if ( i == -1 ) continue;
+        if ( i == rows ) continue;
+        for (j=j0-1; j<=j0+l; j++) {
+            if ( j == -1 ) continue;
+            if ( j == cols ) continue;
+            char c = ss[i*(cols+1)+j];
+            if ( c == '*' ) {
+                // printf("number (%d = %d,%d,%d) is adjacent to gear (%d,%d)\n", num, i0, j0, l, i, j);
+                return specific_gear_ratio(num, i, j);
+            }
+        }
+    }
+    return 0;
+}
+
 int main(int argc, const char* argv[]) {
   if (argc < 2) {
     printf("Usage: %s input.txt [mode]\n", argv[0]);
@@ -63,7 +114,12 @@ int main(int argc, const char* argv[]) {
         {
             if (num != 0) {
                 // printf("check number %d at (%d, %d), len = %d\n", num, i, jstart, j-jstart);
-                if (is_adjacent_to_symbol(i, jstart, j-jstart)) result += num;
+                if (mode == 1) {
+                    if (is_adjacent_to_symbol(i, jstart, j-jstart)) result += num;
+                } else {
+                    result += gear_ratio_if_second_adjacent_number(i, jstart, j-jstart, num);
+                }
+
                 jstart = -1;
             }
 
