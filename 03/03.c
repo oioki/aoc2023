@@ -30,7 +30,7 @@ typedef struct gear {
     int num;
 } gear;
 
-const int MAX_GEARS = 500;
+# define MAX_GEARS 500
 gear gears[MAX_GEARS];
 int num_gears = 0;
 
