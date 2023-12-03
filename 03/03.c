@@ -50,8 +50,7 @@ int specific_gear_ratio(int num, int i, int j) {
     num_gears++;
 
     if (num_gears > MAX_GEARS) {
-        printf("Gear storage overflow!\n");
-        exit(3);
+        return -1;
     }
 
     return 0;
@@ -93,7 +92,14 @@ int main(int argc, const char* argv[]) {
   }
 
   int bytes_read = fread(ss, 1, 19999, f);
-  cols = strchr(ss, '\n') - ss;
+  fclose(f);
+
+  const char * eol_position = strchr(ss, '\n');
+  if (eol_position == NULL) {
+    printf("Could not find the end of the line.\n");
+    return 3;
+  }
+  cols = eol_position - ss;
   rows = bytes_read / (cols + 1);
 
   int result = 0;
@@ -117,7 +123,12 @@ int main(int argc, const char* argv[]) {
                 if (mode == 1) {
                     if (is_adjacent_to_symbol(i, jstart, j-jstart)) result += num;
                 } else {
-                    result += gear_ratio_if_second_adjacent_number(i, jstart, j-jstart, num);
+                    int gear_ratio = gear_ratio_if_second_adjacent_number(i, jstart, j-jstart, num);
+                    if (gear_ratio == -1) {
+                        printf("Gear storage overflow!\n");
+                        return 4;
+                    }
+                    result += gear_ratio;
                 }
 
                 jstart = -1;
