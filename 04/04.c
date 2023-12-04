@@ -25,6 +25,10 @@ int main(int argc, const char* argv[]) {
 
   int result = 0;
 
+  // only used in mode 2
+  int cards[210][2];
+  int i_card = 0;
+
   char s[120];
   while (!feof(f)) {
     if (fgets(s, 119, f) == NULL) {
@@ -64,7 +68,12 @@ int main(int argc, const char* argv[]) {
     int value = 0;
     while ( (i<i_wn) && (j<i_nyh)) {
         if (winning_numbers[i] == numbers_you_have[j]) {
-            value = (value == 0) ? 1 : 2*value;
+            if (mode == 1) {
+                value = (value == 0) ? 1 : 2*value;
+            } else {
+                value++;
+            }
+
             i++;
             j++;
             continue;
@@ -74,8 +83,23 @@ int main(int argc, const char* argv[]) {
             j++;
         }
     }
-    // printf("Value: %d\n", value);
-    result += value;
+    if ( mode == 1 ) {
+        result += value;
+    } else {
+        cards[i_card][0] = value;
+        cards[i_card][1] = 1;
+        i_card++;
+    }
+  }
+
+  if (mode == 2) {
+    for(int i=0; i<i_card; i++) {
+        for (int j=i+1; j<i+1+cards[i][0]; j++)
+        {
+            cards[j][1] += cards[i][1];
+        }
+        result += cards[i][1];
+    }
   }
 
   printf("Answer: %d\n", result);
