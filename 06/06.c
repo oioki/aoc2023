@@ -1,9 +1,6 @@
-#include <ctype.h>
-#include <stdbool.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-
 
 int main(int argc, const char* argv[]) {
   if (argc < 2) {
@@ -22,14 +19,14 @@ int main(int argc, const char* argv[]) {
     mode = atoi(argv[2]);
   }
 
-  unsigned int times[10];
+  unsigned long long int times[10];
   unsigned long long int distances[10];
 
   int n_races = 0;
   fscanf(f, "Time:     ");
   while (1) {
     int res;
-    res = fscanf(f, "%u", &times[n_races]);
+    res = fscanf(f, "%llu", &times[n_races]);
     if (res != 1) break;
     n_races++;
   };
@@ -63,6 +60,11 @@ int main(int argc, const char* argv[]) {
     }
   }
   else {
+    double discr = sqrt(times[0]*times[0] - 4*distances[0]);
+    double t1 = (times[0] - discr)/2;
+    double t2 = (times[0] + discr)/2;
+
+    result = floor(t2) - floor(t1);
   }
 
   printf("Answer: %lu\n", result);

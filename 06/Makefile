@@ -5,11 +5,11 @@ solution: 06.c
 
 run: solution
 	./solution input.txt
-	# ./solution input2.txt 2
+	./solution input2.txt 2
 
 tests: solution
 	./solution example.txt
-	# ./solution example2.txt 2
+	./solution example2.txt 2
 
 check: cppcheck pvs-studio
 
