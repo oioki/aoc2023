@@ -5,12 +5,12 @@ solution: 07.c
 
 run: solution
 	./solution input.txt
-	# ./solution input.txt 2
+	./solution input.txt 2
 
 tests: solution
-	# ./solution explain.txt
+	./solution explain.txt
 	./solution example.txt
-	# ./solution example.txt 2
+	./solution example.txt 2
 
 check: cppcheck pvs-studio
 

@@ -4,12 +4,25 @@
 #include <stdlib.h>
 #include <string.h>
 
+int mode = 1;
+
 unsigned int card_power(char c) {
-  if ( ('2' <= c) && (c <= '9') ) {
-    return c - '2';
+  if (mode == 1) {
+    if ( ('2' <= c) && (c <= '9') ) {
+      return c - '2';
+    }
+    if ( c == 'T' ) return 8;
+    if ( c == 'J' ) return 9;
   }
-  if ( c == 'T' ) return 8;
-  if ( c == 'J' ) return 9;
+
+  if (mode == 2) {
+    if ( c == 'J' ) return 0;
+    if ( ('2' <= c) && (c <= '9') ) {
+      return c - '2' + 1;
+    }
+    if ( c == 'T' ) return 9;
+  }
+
   if ( c == 'Q' ) return 10;
   if ( c == 'K' ) return 11;
   return 12;  // c == 'A'
@@ -21,6 +34,54 @@ unsigned int hand_power(const char * hand) {
     sum = sum*13 + card_power(hand[i]);
   }
   return sum;
+}
+
+#define FIVE_OF_A_KIND  6
+#define FOUR_OF_A_KIND  5
+#define FULL_HOUSE      4
+#define THREE_OF_A_KIND 3
+#define TWO_PAIR        2
+#define ONE_PAIR        1
+#define HIGH_CARD       0
+
+int get_hand_type(int max_matches, int cnt_max_matches, int pre_max_matches, int cnt_pre_max_matches, int n_jokers) {
+  if (mode == 1) n_jokers = 0;
+
+  if (max_matches == 5) return FIVE_OF_A_KIND;
+
+  if (max_matches == 4) {
+    if (n_jokers == 1) return FIVE_OF_A_KIND;
+    return FOUR_OF_A_KIND;
+  }
+
+  if ( (max_matches == 3) && (pre_max_matches == 2) && (cnt_pre_max_matches == 2) ) {
+    return FULL_HOUSE;
+  }
+
+  if (max_matches == 3) {
+    if (n_jokers == 2) return FIVE_OF_A_KIND;
+    if (n_jokers == 1) return FOUR_OF_A_KIND;
+    return THREE_OF_A_KIND;
+  }
+
+  if ( (max_matches == 2) && (cnt_max_matches == 2) ) {
+      if (n_jokers == 1) return FULL_HOUSE;
+      return TWO_PAIR;
+  }
+
+  if (max_matches == 2) {
+    if (n_jokers == 3) return FIVE_OF_A_KIND;
+    if (n_jokers == 2) return FOUR_OF_A_KIND;
+    if (n_jokers == 1) return THREE_OF_A_KIND;
+    return ONE_PAIR;
+  }
+
+  // High card
+  if (n_jokers == 4) return FIVE_OF_A_KIND;
+  if (n_jokers == 3) return FOUR_OF_A_KIND;
+  if (n_jokers == 2) return THREE_OF_A_KIND;
+  if (n_jokers == 1) return ONE_PAIR;
+  return HIGH_CARD;
 }
 
 int main(int argc, const char* argv[]) {
@@ -35,7 +96,6 @@ int main(int argc, const char* argv[]) {
     return 2;
   }
 
-  int mode = 1;
   if (argc > 2) {
     mode = atoi(argv[2]);
   }
@@ -56,12 +116,26 @@ int main(int argc, const char* argv[]) {
     int cnt_max_matches = 0;
     int pre_max_matches = 0;
     int cnt_pre_max_matches = 0;
+    int n_jokers = 0;
     for (i=0; i<5; i++)
     {
+      if (s[i] == 'J') n_jokers++;
+
       int cnt=0;
       for (a=i+0; a<5; a++)
       {
-        if (s[a] == s[i]) cnt++;
+        if (mode == 1) {
+          if ( s[a] == s[i] )
+          {
+            cnt++;
+          }
+        } else
+        {  // mode == 2
+          if ( (s[a] == s[i]) && (s[i] != 'J') )
+          {
+            cnt++;
+          }
+        }
       }
 
       if (cnt > max_matches) {
@@ -80,31 +154,22 @@ int main(int argc, const char* argv[]) {
         cnt_pre_max_matches ++;
       }
     }
+    // printf("n jokers: %d\n", n_jokers);
     // printf("max match: %d, num matches: %d;    pre-max match: %d, num: %d\n", max_matches, cnt_max_matches, pre_max_matches, cnt_pre_max_matches);
 
-    printf("%s: ", s);
-    if (max_matches == 5) {
-      printf("Five of a kind\n");
-      values[n_hands] = 6;
-    } else if (max_matches == 4) {
-      printf("Four of a kind\n");
-      values[n_hands] = 5;
-    } else if ( (max_matches == 3) && (pre_max_matches == 2) && (cnt_pre_max_matches == 2) ) {
-      printf("Full house\n");
-      values[n_hands] = 4;
-    } else if (max_matches == 3) {
-      printf("Three of a kind\n");
-      values[n_hands] = 3;
-    } else if ( (max_matches == 2) && (cnt_max_matches == 2) ) {
-      printf("Two pair\n");
-      values[n_hands] = 2;
-    } else if (max_matches == 2) {
-      printf("One pair\n");
-      values[n_hands] = 1;
-    } else {
-      printf("High card\n");
-      values[n_hands] = 0;
-    }
+    // printf("%s: ", s);
+    values[n_hands] = get_hand_type(max_matches, cnt_max_matches, pre_max_matches, cnt_pre_max_matches, n_jokers);
+    // switch(values[n_hands]) {
+    //   case FIVE_OF_A_KIND: printf("Five of a kind");break;
+    //   case FOUR_OF_A_KIND: printf("Four of a kind");break;
+    //   case FULL_HOUSE    : printf("Full house");break;
+    //   case THREE_OF_A_KIND: printf("Three of a kind");break;
+    //   case TWO_PAIR      : printf("Two pair");break;
+    //   case ONE_PAIR      : printf("One pair");break;
+    //   case HIGH_CARD     : printf("High card");break;
+    // }
+    // printf("\n");
+
     powers[n_hands] = hand_power(s);
 
     n_hands++;
@@ -112,7 +177,7 @@ int main(int argc, const char* argv[]) {
 
   int i;
   for (i=0; i<n_hands; i++) {
-    printf("[%s]: value %d, power %u\n", hands[i], values[i], powers[i]);
+    // printf("[%s]: value %d, power %u\n", hands[i], values[i], powers[i]);
   }
 
 
