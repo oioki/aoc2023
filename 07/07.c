@@ -185,11 +185,9 @@ int main(int argc, const char* argv[]) {
 
   unsigned int result = 0;
 
-  // bubble sort
   int j;
-  int rank;
   for (i=0; i<n_hands; i++) {
-    rank = 1;
+    int rank = 1;
     for (j=0; j<n_hands; j++) {
       if ( (values[i] > values[j]) ||
            ( (values[i] == values[j]) && (powers[i] > powers[j]) ) ) {
