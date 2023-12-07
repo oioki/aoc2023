@@ -47,6 +47,8 @@ unsigned int hand_power(const char * hand) {
 int get_hand_type(int max_matches, int cnt_max_matches, int pre_max_matches, int cnt_pre_max_matches, int n_jokers) {
   if (mode == 1) n_jokers = 0;
 
+  if (n_jokers == 5) return FIVE_OF_A_KIND;
+
   if (max_matches == 5) return FIVE_OF_A_KIND;
 
   if (max_matches == 4) {
@@ -185,15 +187,17 @@ int main(int argc, const char* argv[]) {
 
   // bubble sort
   int j;
+  int rank;
   for (i=0; i<n_hands; i++) {
-    result += bids[i];
+    rank = 1;
     for (j=0; j<n_hands; j++) {
       if ( (values[i] > values[j]) ||
            ( (values[i] == values[j]) && (powers[i] > powers[j]) ) ) {
-          // swap i and j
-          result += bids[i];
+          rank++;
       }
     }
+    // printf("rank %s %d %d\n", hands[i], values[i], rank);
+    result += rank * bids[i];
   }
 
   printf("Answer: %u\n", result);

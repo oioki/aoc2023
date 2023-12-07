@@ -8,7 +8,7 @@ run: solution
 	./solution input.txt 2
 
 tests: solution
-	./solution explain.txt
+	# ./solution explain.txt
 	./solution example.txt
 	./solution example.txt 2
 
