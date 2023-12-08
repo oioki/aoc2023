@@ -27,6 +27,8 @@ int main(int argc, const char* argv[]) {
 
   int map[800][3];
   int l_map = 0;
+  int curpos[10];
+  int n_ghosts = 0;
 
   while (!feof(f)) {
     char node_0[4];
@@ -46,6 +48,10 @@ int main(int argc, const char* argv[]) {
     }
 
     if (!found) {
+      if (node_0[2] == 'A') {
+        curpos[n_ghosts] = node_0[0]*256*256 + node_0[1]*256 + node_0[2];
+        n_ghosts++;
+      }
       map[l_map][0] = value_0;
       map[l_map][1] = value_l;
       map[l_map][2] = value_r;
@@ -53,29 +59,28 @@ int main(int argc, const char* argv[]) {
     }
   }
 
-  int curpos = 'A'*256*256 + 'A'*256+'A';
   int steps = 0;
   int len = strlen(path);
 
+  int g = 5;
   while (1)
   for (int c=0; c<len; c++) {
     for (int j=0; j<l_map; j++) {
-      if (map[j][0] == curpos) {
+      if (map[j][0] == curpos[g]) {
         if (path[c] == 'L') {
-          curpos = map[j][1];
+          curpos[g] = map[j][1];
         }
         if (path[c] == 'R') {
-          curpos = map[j][2];
+          curpos[g] = map[j][2];
         }
         steps++;
-        if (curpos == 'Z'*256*256 + 'Z'*256 + 'Z') {
+        if (curpos[g]%256 == 'Z') {
           printf("Answer: %d\n", steps);
           return 0;
         }
         break;
       }
     }
-
   }
 
   int result = 77777;
