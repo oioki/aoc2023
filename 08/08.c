@@ -5,6 +5,33 @@
 #include <string.h>
 
 int mode = 1;
+int map[800][3];
+int l_map = 0;
+
+char path[310];
+int len;
+
+int steps_to_reach_z(int pos) {
+  int steps = 0;
+  while (1)
+  for (int c=0; c<len; c++) {
+    for (int j=0; j<l_map; j++) {
+      if (map[j][0] == pos) {
+        if (path[c] == 'L') {
+          pos = map[j][1];
+        }
+        if (path[c] == 'R') {
+          pos = map[j][2];
+        }
+        steps++;
+        if (pos%256 == 'Z') {
+          return steps;
+        }
+        break;
+      }
+    }
+  }
+}
 
 int main(int argc, const char* argv[]) {
   if (argc < 2) {
@@ -22,11 +49,8 @@ int main(int argc, const char* argv[]) {
     mode = atoi(argv[2]);
   }
 
-  char path[310];
   fscanf(f, "%309s", path);
 
-  int map[800][3];
-  int l_map = 0;
   int curpos[10];
   int n_ghosts = 0;
 
@@ -60,31 +84,11 @@ int main(int argc, const char* argv[]) {
   }
 
   int steps = 0;
-  int len = strlen(path);
+  len = strlen(path);
 
-  int g = 5;
-  while (1)
-  for (int c=0; c<len; c++) {
-    for (int j=0; j<l_map; j++) {
-      if (map[j][0] == curpos[g]) {
-        if (path[c] == 'L') {
-          curpos[g] = map[j][1];
-        }
-        if (path[c] == 'R') {
-          curpos[g] = map[j][2];
-        }
-        steps++;
-        if (curpos[g]%256 == 'Z') {
-          printf("Answer: %d\n", steps);
-          return 0;
-        }
-        break;
-      }
-    }
+  for(int g=0; g<n_ghosts; g++) {
+    printf("steps for %d ghost: %d\n", g, steps_to_reach_z(curpos[g]));
   }
-
-  int result = 77777;
-  printf("Answer: %i\n", result);
 
   return 0;
 }
