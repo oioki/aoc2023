@@ -33,6 +33,16 @@ int steps_to_reach_z(int pos) {
   }
 }
 
+uint64_t gcd(uint64_t a, uint64_t b) {
+  if (b == 0) {
+    return a;
+  }
+  return gcd(b, a % b);
+}
+uint64_t lcm(uint64_t n1, uint64_t n2) {
+  return n1 * n2 / gcd(n1, n2);
+}
+
 int main(int argc, const char* argv[]) {
   if (argc < 2) {
     printf("Usage: %s input.txt [mode]\n", argv[0]);
@@ -86,9 +96,18 @@ int main(int argc, const char* argv[]) {
   int steps = 0;
   len = strlen(path);
 
-  for(int g=0; g<n_ghosts; g++) {
-    printf("steps for %d ghost: %d\n", g, steps_to_reach_z(curpos[g]));
+  if (mode == 1) {
+    printf("Answer: %llu\n", steps_to_reach_z(curpos[0]));
+    return 0;
   }
+
+  uint64_t result = 1;
+  for(int g=0; g<n_ghosts; g++) {
+    uint64_t st = steps_to_reach_z(curpos[g]);
+    printf("steps for %d ghost: %d\n", g, st);
+    result = lcm(result, st);
+  }
+  printf("Answer: %llu\n", result);
 
   return 0;
 }
