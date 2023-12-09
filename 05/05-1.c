@@ -8,7 +8,7 @@
 
 int main(int argc, const char* argv[]) {
   if (argc < 2) {
-    printf("Usage: %s input.txt [mode]\n", argv[0]);
+    printf("Usage: %s input.txt\n", argv[0]);
     return 1;
   }
 
@@ -18,13 +18,8 @@ int main(int argc, const char* argv[]) {
     return 2;
   }
 
-  int mode = 1;
-  if (argc > 2) {
-    mode = atoi(argv[2]);
-  }
-
-  unsigned int seeds[20];
-  bool seed_done_on_this_step[20];
+  unsigned int seeds[30];
+  bool seed_done_on_this_step[30];
   int n_seeds = 0;
 
   fscanf(f, "seeds: ");
