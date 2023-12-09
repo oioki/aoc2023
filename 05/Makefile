@@ -8,11 +8,12 @@ solution2: 05-2.c
 
 run: solution1 solution2
 	./solution1 input.txt
-	# ./solution input.txt 2
+	./solution2 input.txt
 
 tests: solution1 solution2
 	./solution1 example.txt
 	./solution1 example2.txt
+	./solution2 example.txt
 
 check: cppcheck pvs-studio
 
