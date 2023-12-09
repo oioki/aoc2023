@@ -25,6 +25,14 @@ int solve_one_history(int n, const int values[]) {
     if (all_zeros) break;
   }
 
+  if (mode == 2) {
+    int tmp = 0;
+    for (int j=depth; j>=0; j--) {
+      tmp = middle[j][0] - tmp;
+    }
+    return values[0] - tmp;
+  }
+
   middle[depth][n-depth-1] = 0;
   for (int j=depth-1; j>=0; j--) {
     middle[j][n-j-1] = middle[j+1][n-j-1-1] + middle[j][n-j-1-1];
