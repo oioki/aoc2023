@@ -59,19 +59,11 @@ int main(int argc, const char* argv[]) {
     }
   }
 
-  // printf("%c\n", grid[i_start-1][j_start]);
-  // printf("%c\n", grid[i_start][j_start-1]);
-  // printf("%c\n", grid[i_start][j_start+1]);
-  // printf("%c\n", grid[i_start+1][j_start]);
-
   int loop_length = 1;
 
-  // example1, example2, example3
-  // int i_next = i_start;
-  // int j_next = j_start+1;
-  // int direction = RIGHT;
-
-  // input, example4
+  // all inputs have valid tile down from the start.
+  // let's cut the corner here but it's possible to add
+  // checks for other cases
   int i_next = i_start + 1;
   int j_next = j_start;
   int direction = DOWN;

@@ -5,11 +5,13 @@ solution: 10.c
 
 run: solution
 	./solution input.txt
-	# ./solution input.txt 2
 
 tests: solution
-	# ./solution example1.txt
-	# ./solution example2.txt
+	./solution example1.txt
+	./solution example2.txt
+	./solution example3.txt
+	./solution example4.txt
+	./solution example5.txt
 
 check: cppcheck pvs-studio
 
