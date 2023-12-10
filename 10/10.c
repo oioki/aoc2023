@@ -79,82 +79,62 @@ int main(int argc, const char* argv[]) {
   while(1) {
     // printf("considering grid[%d,%d] = %c, direction = %d\n", i_next, j_next, grid[i_next][j_next], direction);
     if (grid[i_next][j_next] == 'S') break;
+
+    part_of_loop[i_next][j_next] = true;
+    loop_length++;
+
     if (direction == UP) {
       if (grid[i_next][j_next] == '|') {
-        part_of_loop[i_next][j_next] = true;
-        loop_length++;
         i_next--;
         direction = UP;
       }
       else if (grid[i_next][j_next] == 'F') {
-        part_of_loop[i_next][j_next] = true;
-        loop_length++;
         j_next++;
         direction = RIGHT;
       }
       else if (grid[i_next][j_next] == '7') {
-        part_of_loop[i_next][j_next] = true;
-        loop_length++;
         j_next--;
         direction = LEFT;
       }
     }
     else if (direction == LEFT) {
       if (grid[i_next][j_next] == '-') {
-        part_of_loop[i_next][j_next] = true;
-        loop_length++;
         j_next--;
         direction = LEFT;
       }
       else if (grid[i_next][j_next] == 'L') {
-        part_of_loop[i_next][j_next] = true;
-        loop_length++;
         i_next--;
         direction = UP;
       }
       else if (grid[i_next][j_next] == 'F') {
-        part_of_loop[i_next][j_next] = true;
-        loop_length++;
         i_next++;
         direction = DOWN;
       }
     }
     else if (direction == RIGHT) {
       if (grid[i_next][j_next] == '-') {
-        part_of_loop[i_next][j_next] = true;
-        loop_length++;
         j_next++;
         direction = RIGHT;
       }
       else if (grid[i_next][j_next] == '7') {
-        part_of_loop[i_next][j_next] = true;
-        loop_length++;
         i_next++;
         direction = DOWN;
       }
       else if (grid[i_next][j_next] == 'J') {
-        part_of_loop[i_next][j_next] = true;
-        loop_length++;
         i_next--;
         direction = UP;
       }
     }
     else if (direction == DOWN) {
       if (grid[i_next][j_next] == '|') {
-        part_of_loop[i_next][j_next] = true;
-        loop_length++;
         i_next++;
         direction = DOWN;
       }
       else if (grid[i_next][j_next] == 'J') {
-        part_of_loop[i_next][j_next] = true;
-        loop_length++;
         j_next--;
         direction = LEFT;
       }
       else if (grid[i_next][j_next] == 'L') {
-        part_of_loop[i_next][j_next] = true;
-        loop_length++;
         j_next++;
         direction = RIGHT;
       }
