@@ -86,7 +86,6 @@ int main(int argc, const char* argv[]) {
     if (direction == UP) {
       if (grid[i_next][j_next] == '|') {
         i_next--;
-        direction = UP;
       }
       else if (grid[i_next][j_next] == 'F') {
         j_next++;
@@ -100,7 +99,6 @@ int main(int argc, const char* argv[]) {
     else if (direction == LEFT) {
       if (grid[i_next][j_next] == '-') {
         j_next--;
-        direction = LEFT;
       }
       else if (grid[i_next][j_next] == 'L') {
         i_next--;
@@ -114,7 +112,6 @@ int main(int argc, const char* argv[]) {
     else if (direction == RIGHT) {
       if (grid[i_next][j_next] == '-') {
         j_next++;
-        direction = RIGHT;
       }
       else if (grid[i_next][j_next] == '7') {
         i_next++;
@@ -128,7 +125,6 @@ int main(int argc, const char* argv[]) {
     else if (direction == DOWN) {
       if (grid[i_next][j_next] == '|') {
         i_next++;
-        direction = DOWN;
       }
       else if (grid[i_next][j_next] == 'J') {
         j_next--;
