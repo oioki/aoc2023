@@ -151,61 +151,36 @@ int main(int argc, const char* argv[]) {
 
     for (int j=0; j<m; j++) {
       if (!part_of_loop[i][j]) {
-        if (inside) {
-          area++;
-          // printf("[%d %d]\n", i, j);
-        } else {
-                  prev_symbol = '.';
-        }
+        if (inside) area++;
       }
+
       if (part_of_loop[i][j]) {
         char c = grid[i][j];
 
         if (c == '|') {
           inside = !inside;
-            // printf("{%d %d} %d\n", i, j, inside);
-            prev_symbol = '.';
-        } else
-        if (c == 'F') {
+        } else if (c == 'F') {
           if (prev_symbol == 'J') {
             inside = !inside;
-            // printf("{%d %d} %d\n", i, j, inside);
-            prev_symbol = '.';
-          } else
-          {
+          } else {
             prev_symbol = c;
           }
-        } else if (c=='L') {
+        } else if (c == 'L') {
           if (prev_symbol == '7') {
             inside = !inside;
-            // printf("{%d %d} %d\n", i, j, inside);
-            prev_symbol = '.';
-          }
-          else
-          {
+          } else {
             prev_symbol = c;
           }
-        } else if (c=='7') {
+        } else if (c == '7') {
           if (prev_symbol == 'L') {
             inside = !inside;
-            // printf("{%d %d} %d\n", i, j, inside);
-            prev_symbol = '.';
-          } else if (prev_symbol == 'F') {
-            prev_symbol = '.';
-          }
-          else
-          {
+          } else if (prev_symbol != 'F') {
             prev_symbol = c;
           }
-        } else         if (c == 'J') {
+        } else if (c == 'J') {
           if (prev_symbol == 'F') {
             inside = !inside;
-            // printf("{%d %d} %d\n", i, j, inside);
-            prev_symbol = '.';
-          } else if (prev_symbol == 'L') {
-            prev_symbol = '.';
-          } else
-          {
+          } else if (prev_symbol != 'L') {
             prev_symbol = c;
           }
         }
