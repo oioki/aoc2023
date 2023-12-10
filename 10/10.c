@@ -6,6 +6,11 @@
 
 int mode = 1;
 
+#define UP 0
+#define LEFT 1
+#define RIGHT 2
+#define DOWN 3
+
 
 int main(int argc, const char* argv[]) {
   if (argc < 2) {
@@ -64,94 +69,94 @@ int main(int argc, const char* argv[]) {
   // example1, example2, example3
   // int i_next = i_start;
   // int j_next = j_start+1;
-  // int direction = 2;
+  // int direction = RIGHT;
 
   // input, example4
   int i_next = i_start + 1;
   int j_next = j_start;
-  int direction = 3;
+  int direction = DOWN;
 
   while(1) {
     // printf("considering grid[%d,%d] = %c, direction = %d\n", i_next, j_next, grid[i_next][j_next], direction);
     if (grid[i_next][j_next] == 'S') break;
-    if (direction == 0) {
+    if (direction == UP) {
       if (grid[i_next][j_next] == '|') {
         part_of_loop[i_next][j_next] = true;
         loop_length++;
         i_next--;
-        direction = 0;
+        direction = UP;
       }
       else if (grid[i_next][j_next] == 'F') {
         part_of_loop[i_next][j_next] = true;
         loop_length++;
         j_next++;
-        direction = 2;
+        direction = RIGHT;
       }
       else if (grid[i_next][j_next] == '7') {
         part_of_loop[i_next][j_next] = true;
         loop_length++;
         j_next--;
-        direction = 1;
+        direction = LEFT;
       }
     }
-    else if (direction == 1) {
+    else if (direction == LEFT) {
       if (grid[i_next][j_next] == '-') {
         part_of_loop[i_next][j_next] = true;
         loop_length++;
         j_next--;
-        direction = 1;
+        direction = LEFT;
       }
       else if (grid[i_next][j_next] == 'L') {
         part_of_loop[i_next][j_next] = true;
         loop_length++;
         i_next--;
-        direction = 0;
+        direction = UP;
       }
       else if (grid[i_next][j_next] == 'F') {
         part_of_loop[i_next][j_next] = true;
         loop_length++;
         i_next++;
-        direction = 3;
+        direction = DOWN;
       }
     }
-    else if (direction == 2) {
+    else if (direction == RIGHT) {
       if (grid[i_next][j_next] == '-') {
         part_of_loop[i_next][j_next] = true;
         loop_length++;
         j_next++;
-        direction = 2;
+        direction = RIGHT;
       }
       else if (grid[i_next][j_next] == '7') {
         part_of_loop[i_next][j_next] = true;
         loop_length++;
         i_next++;
-        direction = 3;
+        direction = DOWN;
       }
       else if (grid[i_next][j_next] == 'J') {
         part_of_loop[i_next][j_next] = true;
         loop_length++;
         i_next--;
-        direction = 0;
+        direction = UP;
       }
     }
-    else if (direction == 3) {
+    else if (direction == DOWN) {
       if (grid[i_next][j_next] == '|') {
         part_of_loop[i_next][j_next] = true;
         loop_length++;
         i_next++;
-        direction = 3;
+        direction = DOWN;
       }
       else if (grid[i_next][j_next] == 'J') {
         part_of_loop[i_next][j_next] = true;
         loop_length++;
         j_next--;
-        direction = 1;
+        direction = LEFT;
       }
       else if (grid[i_next][j_next] == 'L') {
         part_of_loop[i_next][j_next] = true;
         loop_length++;
         j_next++;
-        direction = 2;
+        direction = RIGHT;
       }
     }
   }
@@ -163,16 +168,15 @@ int main(int argc, const char* argv[]) {
   grid[i_start][j_start] = '7';  // input, example4
 
 
-  bool inside = false;
-  int num_inside = 0;
-  char prev_symbol = '.';
+  int area = 0;
   for (int i=0; i<n; i++) {
-    inside = false;
-    prev_symbol = '.';
+    bool inside = false;
+    char prev_symbol = '.';
+
     for (int j=0; j<m; j++) {
       if (!part_of_loop[i][j]) {
         if (inside) {
-          num_inside++;
+          area++;
           // printf("[%d %d]\n", i, j);
         } else {
                   prev_symbol = '.';
@@ -233,7 +237,7 @@ int main(int argc, const char* argv[]) {
     }
   }
 
-  printf("Area: %d\n", num_inside);
+  printf("Area: %d\n", area);
 
   return 0;
 }
