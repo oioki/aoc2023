@@ -132,9 +132,12 @@ int main(int argc, const char* argv[]) {
 
   printf("Max distance: %d\n", loop_length/2);
 
-  // grid[i_start][j_start] = 'F';  // example1, example2, example3
-  grid[i_start][j_start] = '7';  // input, example4
-
+  // replace S with correct symbol; do not care too much
+  if (grid[i_start][j_start-1] == 'F') {
+    grid[i_start][j_start] = '7';
+  } else {
+    grid[i_start][j_start] = 'F';
+  }
 
   int area = 0;
   for (int i=0; i<n; i++) {
