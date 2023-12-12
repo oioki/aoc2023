@@ -65,7 +65,7 @@ int expansion = 1;
 // # 1 => '' 0  (success)
 
 
-void print_debug(char c, char * s, int a, int b[]) {
+void print_debug(char c, char * s, bool in_progress, int a, int b[]) {
   printf("Solving [%c]", c);
   if (c != '\0') {
     printf("[");
@@ -84,11 +84,11 @@ void print_debug(char c, char * s, int a, int b[]) {
     printf("%d,", b[nums]);
     nums++;
   }
-  printf(" (%d extra nums)\n", nums);
+  printf(" (%d extra nums, in progress = %d)\n", nums, in_progress);
 }
 
 int solve(char c, char * s, bool in_progress, int a, int b[]) {
-  print_debug(c, s, a, b);
+  // print_debug(c, s, in_progress, a, b);
   // printf("Solving [%c]", c);
   // if (c != '\0') {
   //   printf("[");
@@ -114,13 +114,16 @@ int solve(char c, char * s, bool in_progress, int a, int b[]) {
 
   if (c == '\0') {
     if (((a == 0) || (a==-1)) && (nums == 0)) {
-      printf("Solution found!\n");
+      // printf("Solution found!\n");
       return 1;
     }
     return 0;
   }
 
   if ( a == -1 ) {
+    if ((c == '.') || (c=='?')) {
+      return solve(s[0], &s[1], false, -1, 0);
+    }
     return 0;
   }
 
@@ -142,7 +145,11 @@ int solve(char c, char * s, bool in_progress, int a, int b[]) {
       }
     }
   } else if (c == '?') {
-      return solve('#', s, false, a, b) + solve('.', s, false, a, b);
+    // if (in_progress) {
+    //   return solve('#', s, false, a, b);
+    // } else {
+      return solve('#', s, in_progress, a, b) + solve('.', s, in_progress, a, b);
+    // }
     
   }
 }
@@ -196,7 +203,7 @@ int main(int argc, const char* argv[]) {
 
     printf("Solving topmost [%c][%s]\n", c, &s[1]);
     int local = solve(c, &s[1], false, a[0], &a[1]);
-    printf("local = %d\n", local);
+    // printf("local = %d\n", local);
     result += local;
   };
 
