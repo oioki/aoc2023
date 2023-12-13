@@ -7,11 +7,12 @@ int mode = 1;
 
 char * current_s;
 
-void print_debug(char c, char * s, bool in_progress, int a, int b[], bool cacheable) {
+void print_debug(char c, const char * s, bool in_progress, int a, const int b[], bool cacheable) {
   printf("Solving [%c]", c);
   if (c != '\0') {
     printf("[");
-    for(int i=0; i<strlen(s); i++) {
+    int l = strlen(s);
+    for(int i=0; i<l; i++) {
       printf("%c", s[i]);
     }
     printf("]");
@@ -33,6 +34,8 @@ void print_debug(char c, char * s, bool in_progress, int a, int b[], bool cachea
 
 }
 
+char input1[200];
+char input2[200];
 unsigned long long int cache[100][100][100];
 
 // #define return_cache(X) result=X;if (cacheable) {cache[a+1][offset_s][nums] = result;printf("set cache %d,%d,%d to %llu\n", a+1,offset_s, nums, result);}return result;
@@ -93,9 +96,10 @@ unsigned long long int solve(char c, char * s, bool in_progress, int a, int b[],
         return_cache(solve(s[0], &s[1], false, a, b, false));
       }
     }
-  } else if (c == '?') {
-    return_cache(solve('#', s, in_progress, a, b, false) + solve('.', s, in_progress, a, b, false));
   }
+
+  // assuming c == '?'
+  return_cache(solve('#', s, in_progress, a, b, false) + solve('.', s, in_progress, a, b, false));
 }
 
 int main(int argc, const char* argv[]) {
@@ -116,17 +120,19 @@ int main(int argc, const char* argv[]) {
 
   unsigned long long int result = 0;
   int a[200];
-  char buffer[200];
-  int bufa[200];
+  int a2[200];
 
-  char s[200];
   while (!feof(f)) {
-    if (fgets(s, 199, f) == NULL) {
+    if (fgets(input1, 199, f) == NULL) {
         break;
     }
       
     int nums = 0;
-    char * s_rest = strchr(s, ' ');
+    char * s_rest = strchr(input1, ' ');
+    if (!s_rest) {
+      printf("invalid input, separating ' ' not found.\n");
+      return 3;
+    }
     s_rest[0] = '\0';
 
     char * cur = &s_rest[1];
@@ -151,30 +157,29 @@ int main(int argc, const char* argv[]) {
       cache[i][j][k] = 0xffffffffffffffff;
 
     if (mode == 2) {
-      int l = s_rest - s;
+      int l = s_rest - input1;
       for (int i=0; i<5; i++) {
-        strncpy(&buffer[i*(l+1)], s, l);
+        strncpy(&input2[i*(l+1)], input1, l);
       }
-      buffer[l] = '?';
-      buffer[2*l+1] = '?';
-      buffer[3*l+2] = '?';
-      buffer[4*l+3] = '?';
-      buffer[5*l+4] = '\0';
+      input2[l] = '?';
+      input2[2*l+1] = '?';
+      input2[3*l+2] = '?';
+      input2[4*l+3] = '?';
+      input2[5*l+4] = '\0';
 
       for (int i=0; i<5*(nums-1); i++) {
-        bufa[i] = a[i%(nums-1)];
+        a2[i] = a[i%(nums-1)];
       }
-      bufa[5*(nums-1)] = -1;
-      nums = 5*(nums-1);
+      a2[5*(nums-1)] = -1;
     }
 
     unsigned long long int local;
     if (mode == 1) {
-      current_s = &s[0];
-      local = solve(s[0], &s[1], false, a[0], &a[1], false);
+      current_s = &input1[0];
+      local = solve(input1[0], &input1[1], false, a[0], &a[1], false);
     } else {
-      current_s = &buffer[0];
-      local = solve(buffer[0], &buffer[1], false, bufa[0], &bufa[1], false);
+      current_s = &input2[0];
+      local = solve(input2[0], &input2[1], false, a2[0], &a2[1], false);
     }
     
     // printf("local = %llu\n", local);
