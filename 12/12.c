@@ -119,7 +119,7 @@ int main(int argc, const char* argv[]) {
   }
 
   unsigned long long int result = 0;
-  int a[200];
+  int a1[200];
   int a2[200];
 
   while (!feof(f)) {
@@ -141,11 +141,11 @@ int main(int argc, const char* argv[]) {
       int bytes_read;
       int res = sscanf(cur, "%d%n", &num, &bytes_read);
       if (res == -1) {
-        a[nums] = -1;
+        a1[nums] = -1;
         nums++;
         break;
       }
-      a[nums] = num;
+      a1[nums] = num;
       nums++;
       cur += bytes_read;
       if (*cur == ',') cur++;
@@ -168,7 +168,7 @@ int main(int argc, const char* argv[]) {
       input2[5*l+4] = '\0';
 
       for (int i=0; i<5*(nums-1); i++) {
-        a2[i] = a[i%(nums-1)];
+        a2[i] = a1[i%(nums-1)];
       }
       a2[5*(nums-1)] = -1;
     }
@@ -176,7 +176,7 @@ int main(int argc, const char* argv[]) {
     unsigned long long int local;
     if (mode == 1) {
       current_s = &input1[0];
-      local = solve(input1[0], &input1[1], false, a[0], &a[1], false);
+      local = solve(input1[0], &input1[1], false, a1[0], &a1[1], false);
     } else {
       current_s = &input2[0];
       local = solve(input2[0], &input2[1], false, a2[0], &a2[1], false);
