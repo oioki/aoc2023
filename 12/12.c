@@ -126,7 +126,6 @@ int main(int argc, const char* argv[]) {
     }
       
     int nums = 0;
-    char c = s[0];
     char * s_rest = strchr(s, ' ');
     s_rest[0] = '\0';
 
@@ -151,27 +150,33 @@ int main(int argc, const char* argv[]) {
     for (int k=0; k<100; k++)
       cache[i][j][k] = 0xffffffffffffffff;
 
-    int l = s_rest - s;
-    for (int i=0; i<5; i++) {
-      strncpy(&buffer[i*(l+1)], s, l);
-    }
-    buffer[l] = '?';
-    buffer[2*l+1] = '?';
-    buffer[3*l+2] = '?';
-    buffer[4*l+3] = '?';
-    buffer[5*l+4] = '\0';
+    if (mode == 2) {
+      int l = s_rest - s;
+      for (int i=0; i<5; i++) {
+        strncpy(&buffer[i*(l+1)], s, l);
+      }
+      buffer[l] = '?';
+      buffer[2*l+1] = '?';
+      buffer[3*l+2] = '?';
+      buffer[4*l+3] = '?';
+      buffer[5*l+4] = '\0';
 
-    for (int i=0; i<5*(nums-1); i++) {
-      bufa[i] = a[i%(nums-1)];
+      for (int i=0; i<5*(nums-1); i++) {
+        bufa[i] = a[i%(nums-1)];
+      }
+      bufa[5*(nums-1)] = -1;
+      nums = 5*(nums-1);
     }
-    bufa[5*(nums-1)] = -1;
-    nums = 5*(nums-1);
 
-    // current_s = &s[0];
-    current_s = &buffer[0];
-    // unsigned long long int local = solve(c, &s[1], false, a[0], &a[1], false);
-    c = buffer[0];
-    unsigned long long int local = solve(c, &buffer[1], false, bufa[0], &bufa[1], false);
+    unsigned long long int local;
+    if (mode == 1) {
+      current_s = &s[0];
+      local = solve(s[0], &s[1], false, a[0], &a[1], false);
+    } else {
+      current_s = &buffer[0];
+      local = solve(buffer[0], &buffer[1], false, bufa[0], &bufa[1], false);
+    }
+    
     // printf("local = %llu\n", local);
     result += local;
   };

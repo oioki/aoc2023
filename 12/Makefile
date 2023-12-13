@@ -5,12 +5,11 @@ solution: 12.c
 
 run: solution
 	./solution input.txt
-#	./solution input.txt 1000000
+	./solution input.txt 2
 
 tests: solution
 	./solution example.txt
-#	./solution example.txt 10
-#	./solution example.txt 100
+	./solution example.txt 2
 
 check: cppcheck pvs-studio
 
