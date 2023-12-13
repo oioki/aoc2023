@@ -29,7 +29,7 @@ void print_debug(char c, char * s, bool in_progress, int a, int b[], bool cachea
   int offset_s = s - current_s;
   printf(" (%d extra nums, in progress = %d)\n", nums, in_progress);
   if (cacheable)
-  printf("cacheable %d with offset %d and nums %d\n", cacheable, offset_s, nums);
+  printf("cacheable with key(%d, %d, %d)\n", a+1, offset_s, nums);
 
 }
 
@@ -180,13 +180,6 @@ int main(int argc, const char* argv[]) {
     // printf("local = %llu\n", local);
     result += local;
   };
-
-
-  // int a[] = {1,1,3, -1};
-  // unsigned long int result = solve('?', "??.###", false, a[0], &a[1]);
-  // int a[] = {3,2,1,-1};
-  // unsigned long int result = solve('?', "###????????", false, a[0], &a[1]);
-
 
   printf("Answer: %llu\n", result);
 
