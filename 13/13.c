@@ -5,7 +5,7 @@
 
 int mode = 1;
 
-int solve(char * grid, int n, int m) {
+int solve(const char * grid, int n, int m) {
   // for (int i=0; i<n; i++) {
   //   for (int j=0; j<m; j++) {
   //     printf("%c", grid[i*100+j]);
