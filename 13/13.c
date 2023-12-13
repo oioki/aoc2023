@@ -16,13 +16,18 @@ int solve(char * grid, int n, int m) {
 
   for (int ii=1; ii<n; ii++) {
     bool perfect_mirror = true;
+    bool smudge_found = false;
     if (ii<=n/2) {
       // printf("%d should iterate over top part only\n", ii);
       for (int i=0; i<ii; i++) {
         for (int j=0; j<m; j++) {
           if (grid[i*100+j] != grid[((2*ii-i-1)*100+j)]) {
-            perfect_mirror = false;
-            break;
+            if (!smudge_found && (mode==2)) {
+              smudge_found = true;
+            } else {
+              perfect_mirror = false;
+              break;
+            }
           }
         }
       }
@@ -31,26 +36,34 @@ int solve(char * grid, int n, int m) {
       for (int i=ii; i<n; i++) {
         for (int j=0; j<m; j++) {
           if (grid[i*100+j] != grid[((2*ii-i-1)*100+j)]) {
-            perfect_mirror = false;
-            break;
+            if (!smudge_found && (mode==2)) {
+              smudge_found = true;
+            } else {
+              perfect_mirror = false;
+              break;
+            }
           }
         }
       }
     }
-    // printf("perfect mirror: %d\n", perfect_mirror);
-    if (perfect_mirror) return 100*ii;
+    if (perfect_mirror && (smudge_found || (mode==1))) return 100*ii;
   }
 
 
   for (int jj=1; jj<m; jj++) {
     bool perfect_mirror = true;
+    bool smudge_found = false;
     if (jj<=m/2) {
       // printf("%d should iterate over left part only\n", jj);
       for (int i=0; i<n; i++) {
         for (int j=0; j<jj; j++) {
           if (grid[i*100+j] != grid[(i*100+((2*jj-j-1)))]) {
-            perfect_mirror = false;
-            break;
+            if (!smudge_found && (mode==2)) {
+              smudge_found = true;
+            } else {
+              perfect_mirror = false;
+              break;
+            }
           }
         }
       }
@@ -59,17 +72,18 @@ int solve(char * grid, int n, int m) {
       for (int i=0; i<n; i++) {
         for (int j=jj; j<m; j++) {
           if (grid[i*100+j] != grid[(i*100+((2*jj-j-1)))]) {
-            perfect_mirror = false;
-            break;
+            if (!smudge_found && (mode==2)) {
+              smudge_found = true;
+            } else {
+              perfect_mirror = false;
+              break;
+            }
           }
         }
       }
     }
-    // printf("perfect mirror: %d\n", perfect_mirror);
-    if (perfect_mirror) return jj;
+    if (perfect_mirror && (smudge_found || mode==1)) return jj;
   }
-
-  // printf("WARNING! no solution\n");
 
   return 0;
 }
