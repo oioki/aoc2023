@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int expansion = 1;
+int mode = 1;
 
 // '?' could be '.' or '#'
 
@@ -64,8 +64,9 @@ int expansion = 1;
 // (15)
 // # 1 => '' 0  (success)
 
+char * current_s;
 
-void print_debug(char c, char * s, bool in_progress, int a, int b[]) {
+void print_debug(char c, char * s, bool in_progress, int a, int b[], bool cacheable) {
   printf("Solving [%c]", c);
   if (c != '\0') {
     printf("[");
@@ -84,11 +85,21 @@ void print_debug(char c, char * s, bool in_progress, int a, int b[]) {
     printf("%d,", b[nums]);
     nums++;
   }
+  int offset_s = s - current_s;
   printf(" (%d extra nums, in progress = %d)\n", nums, in_progress);
+  if (cacheable)
+  printf("cacheable %d with offset %d and nums %d\n", cacheable, offset_s, nums);
+
 }
 
-int solve(char c, char * s, bool in_progress, int a, int b[]) {
-  // print_debug(c, s, in_progress, a, b);
+unsigned long long int cache[100][100][100];
+// char buffer[300];
+
+// #define return_cache(X) result=X;if (cacheable) {cache[a+1][offset_s][nums] = result;printf("set cache %d,%d,%d to %llu\n", a+1,offset_s, nums, result);}return result;
+#define return_cache(X) result=X;if (cacheable) {cache[a+1][offset_s][nums] = result;}return result;
+
+unsigned long long int solve(char c, char * s, bool in_progress, int a, int b[], bool cacheable) {
+  // print_debug(c, s, in_progress, a, b, cacheable);
   // printf("Solving [%c]", c);
   // if (c != '\0') {
   //   printf("[");
@@ -110,53 +121,65 @@ int solve(char c, char * s, bool in_progress, int a, int b[]) {
   // printf("\n");
   // printf("nums = %d\n", nums);
 
+  unsigned long long int result;
+  int offset_s = s - current_s;
+  if (cacheable) {
+    if (cache[a+1][offset_s][nums] == 0xffffffffffffffff) {
+      // printf("no cache found tho\n");
+    } else {
+      // printf("using cached result: %llu\n", cache[a+1][offset_s][nums]);
+      return cache[a+1][offset_s][nums];
+    }
+  }
 
 
   if (c == '\0') {
     if (((a == 0) || (a==-1)) && (nums == 0)) {
       // printf("Solution found!\n");
-      return 1;
+      return_cache(1);
     }
-    return 0;
+    return_cache(0);
   }
 
   if ( a == -1 ) {
     if ((c == '.') || (c=='?')) {
-      return solve(s[0], &s[1], false, -1, 0);
+      return_cache(solve(s[0], &s[1], false, -1, 0, false));
     }
-    return 0;
+    return_cache(0);
   }
 
   if (c == '#') {
     if (a == 0) {
-      return 0;
+      return_cache(0);
     } else {
-      return solve(s[0], &s[1], true, a-1, b);
+      return_cache(solve(s[0], &s[1], true, a-1, b, false));
     }
   } else
   if (c == '.') {
     if (a == 0) {
-      return solve(s[0], &s[1], false, b[0], &b[1]);
+      return_cache(solve(s[0], &s[1], false, b[0], &b[1], true));
     } else {
       if (in_progress) {
-        return 0;
+        return_cache(0);
       } else {
-        return solve(s[0], &s[1], false, a, b);
+        return_cache(solve(s[0], &s[1], false, a, b, false));
       }
     }
   } else if (c == '?') {
     // if (in_progress) {
     //   return solve('#', s, false, a, b);
     // } else {
-      return solve('#', s, in_progress, a, b) + solve('.', s, in_progress, a, b);
+      return_cache(solve('#', s, in_progress, a, b, false) + solve('.', s, in_progress, a, b, false));
     // }
     
   }
+
+  printf("WARNING\n");
 }
 
 int main(int argc, const char* argv[]) {
   if (argc < 2) {
-    printf("Usage: %s input.txt [expansion]\n", argv[0]);
+    printf("Usage: %s input.txt [mode]\n", argv[0]);
     return 1;
   }
 
@@ -167,11 +190,13 @@ int main(int argc, const char* argv[]) {
   }
 
   if (argc > 2) {
-    expansion = atoi(argv[2]);
+    mode = atoi(argv[2]);
   }
 
-  int result = 0;
+  unsigned long long int result = 0;
   int a[200];
+  char buffer[200];
+  int bufa[200];
 
   char s[200];
   while (!feof(f)) {
@@ -201,9 +226,42 @@ int main(int argc, const char* argv[]) {
       if (*cur == ',') cur++;
     }
 
-    printf("Solving topmost [%c][%s]\n", c, &s[1]);
-    int local = solve(c, &s[1], false, a[0], &a[1]);
-    // printf("local = %d\n", local);
+    for (int i=0; i<100; i++)
+    for (int j=0; j<100; j++)
+    for (int k=0; k<100; k++)
+      cache[i][j][k] = 0xffffffffffffffff;
+
+    int l = s_rest - s;
+    // printf("l = %d\n", l);
+    for (int i=0; i<5; i++) {
+      strncpy(&buffer[i*(l+1)], s, l);
+    }
+    buffer[l] = '?';
+    buffer[2*l+1] = '?';
+    buffer[3*l+2] = '?';
+    buffer[4*l+3] = '?';
+    buffer[5*l+4] = '\0';
+    // printf("new s: %s\n", buffer);
+
+    // printf("nums = %d\n", nums);
+    for (int i=0; i<5*(nums-1); i++) {
+      bufa[i] = a[i%(nums-1)];
+    }
+    bufa[5*(nums-1)] = -1;
+    nums = 5*(nums-1);
+
+    // for (int i=0; i<nums; i++) {
+    //   printf("%d,", bufa[i]);
+    // }
+    // printf("\n");
+
+    // printf("Solving topmost [%c][%s]\n", c, &s[1]);
+    // current_s = &s[0];
+    current_s = &buffer[0];
+    // unsigned long long int local = solve(c, &s[1], false, a[0], &a[1], false);
+    c = buffer[0];
+    unsigned long long int local = solve(c, &buffer[1], false, bufa[0], &bufa[1], false);
+    // printf("local = %llu\n", local);
     result += local;
   };
 
@@ -214,7 +272,7 @@ int main(int argc, const char* argv[]) {
   // unsigned long int result = solve('?', "###????????", false, a[0], &a[1]);
 
 
-  printf("Answer: %d\n", result);
+  printf("Answer: %llu\n", result);
 
   return 0;
 }

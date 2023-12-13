@@ -4,7 +4,7 @@ solution: 12.c
 	cc 12.c -Wall -Wextra -o solution
 
 run: solution
-#	./solution input.txt 2
+	./solution input.txt
 #	./solution input.txt 1000000
 
 tests: solution
