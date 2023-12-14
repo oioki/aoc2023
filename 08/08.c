@@ -1,4 +1,3 @@
-#include <ctype.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,8 +10,8 @@ int l_map = 0;
 char path[310];
 int len;
 
-int steps_to_reach_z(int pos) {
-  int steps = 0;
+unsigned int steps_to_reach_z(int pos) {
+  unsigned int steps = 0;
   while (1)
   for (int c=0; c<len; c++) {
     for (int j=0; j<l_map; j++) {
@@ -62,7 +61,7 @@ int main(int argc, const char* argv[]) {
   fscanf(f, "%309s", path);
 
   int curpos[10];
-  int n_ghosts = 0;
+  unsigned int n_ghosts = 0;
 
   while (!feof(f)) {
     char node_0[4];
@@ -93,18 +92,17 @@ int main(int argc, const char* argv[]) {
     }
   }
 
-  int steps = 0;
   len = strlen(path);
 
   if (mode == 1) {
-    printf("Answer: %llu\n", steps_to_reach_z(curpos[0]));
+    printf("Answer: %u\n", steps_to_reach_z(curpos[0]));
     return 0;
   }
 
-  uint64_t result = 1;
-  for(int g=0; g<n_ghosts; g++) {
-    uint64_t st = steps_to_reach_z(curpos[g]);
-    printf("steps for %d ghost: %d\n", g, st);
+  unsigned long long int result = 1;
+  for(unsigned int g=0; g<n_ghosts; g++) {
+    unsigned long long int st = steps_to_reach_z(curpos[g]);
+    printf("steps for %u ghost: %llu\n", g, st);
     result = lcm(result, st);
   }
   printf("Answer: %llu\n", result);
