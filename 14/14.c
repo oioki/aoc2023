@@ -176,7 +176,7 @@ int main(int argc, const char* argv[]) {
 
       for (unsigned int k=0; k<step; k++) {
         if (memcmp(ctx.digest, hash[k], 16) == 0) {
-          // printf("%d matches %d\n", step, k);
+          // printf("%u matches %u\n", step, k);
           cycle_length = step - k;
         }
       }
