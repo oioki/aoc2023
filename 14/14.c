@@ -4,6 +4,27 @@
 #include <string.h>
 
 int mode = 1;
+char grid[200][200];
+char grid2[200][200];
+
+unsigned int get_load(char ** p, unsigned int n, unsigned int m) {
+  char (*grid)[200] = (char (*)[200])p;
+
+  int result = 0;
+  for (unsigned int j=0; j<n; j++) {
+    unsigned int j_rock = n;
+    for (unsigned int i=0; i<m; i++) {
+      if (grid[i][j] == 'O') {
+        // printf("%u,%u -> %u\n", i,j, j_rock);
+        result += j_rock;
+        j_rock--;
+      } else if (grid[i][j] == '#') {
+        j_rock = n-1-i;
+      }
+    }
+  }
+  return result;
+}
 
 int main(int argc, const char* argv[]) {
   if (argc < 2) {
@@ -21,7 +42,6 @@ int main(int argc, const char* argv[]) {
     mode = atoi(argv[2]);
   }
 
-  char grid[200][200];
   unsigned long int n = 0;
   unsigned long int m = 0;
 
@@ -33,22 +53,7 @@ int main(int argc, const char* argv[]) {
     n++;
   }
 
-  unsigned int result = 0;
-
-  for (unsigned int j=0; j<n; j++) {
-    unsigned int j_rock = n;
-    for (unsigned int i=0; i<m; i++) {
-      if (grid[i][j] == 'O') {
-        // printf("%u,%u -> %u\n", i,j, j_rock);
-        result += j_rock;
-        j_rock--;
-      } else if (grid[i][j] == '#') {
-        j_rock = n-1-i;
-      }
-    }
-  }
-
-  printf("Answer: %u\n", result);
+  printf("Answer: %u\n", get_load(grid, n, m));
 
   return 0;
 }
