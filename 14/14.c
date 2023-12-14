@@ -10,13 +10,11 @@ int mode = 1;
 char grid[200][200];
 char grid2[200][200];
 
-unsigned int get_load(char ** p, unsigned int n, unsigned int m) {
-  char (*grid)[200] = (char (*)[200])p;
-
+unsigned int get_load(const char (*g)[200], unsigned int n, unsigned int m) {
   int result = 0;
   for (unsigned int j=0; j<m; j++) {
     for (unsigned int i=0; i<n; i++) {
-      if (grid[i][j] == 'O') {
+      if (g[i][j] == 'O') {
         result += n-i;
       }
     }
@@ -24,102 +22,86 @@ unsigned int get_load(char ** p, unsigned int n, unsigned int m) {
   return result;
 }
 
-void print(char ** p, unsigned int n, unsigned int m) {
-  char (*grid)[200] = (char (*)[200])p;
-
+void print(const char (*g)[200], unsigned int n, unsigned int m) {
   for (unsigned int i=0; i<n; i++) {
     for (unsigned int j=0; j<m; j++) {
-      printf("%c", grid[i][j]);
+      printf("%c", g[i][j]);
     }
     printf("\n");
   }
   printf("------------------------------------\n");
 }
 
-void reset(char ** p, unsigned int n, unsigned int m) {
-  char (*grid)[200] = (char (*)[200])p;
-
+void reset(char (*g)[200], unsigned int n, unsigned int m) {
   for (unsigned int i=0; i<n; i++) {
     for (unsigned int j=0; j<m; j++) {
-      grid[i][j] = '.';
+      g[i][j] = '.';
     }
   }
 }
 
-void roll_north(char ** p, char ** q, unsigned int n, unsigned int m) {
-  char (*grid)[200] = (char (*)[200])p;
-  char (*grid2)[200] = (char (*)[200])q;
-
+void roll_north(char (*p)[200], char (*q)[200], unsigned int n, unsigned int m) {
   reset(q, n, m);
 
   for (unsigned int j=0; j<m; j++) {
     unsigned int i_rock = 0;
     for (unsigned int i=0; i<n; i++) {
-      if (grid[i][j] == 'O') {
-        grid2[i_rock][j] = 'O';
+      if (p[i][j] == 'O') {
+        q[i_rock][j] = 'O';
         i_rock++;
-      } else if (grid[i][j] == '#') {
-        grid2[i][j] = '#';
+      } else if (p[i][j] == '#') {
+        q[i][j] = '#';
         i_rock = i+1;
       }
     }
   }
 }
 
-void roll_west(char ** p, char ** q, unsigned int n, unsigned int m) {
-  char (*grid)[200] = (char (*)[200])p;
-  char (*grid2)[200] = (char (*)[200])q;
-
+void roll_west(char (*p)[200], char (*q)[200], unsigned int n, unsigned int m) {
   reset(q, n, m);
 
   for (unsigned int i=0; i<n; i++) {
     unsigned int j_rock = 0;
     for (unsigned int j=0; j<n; j++) {
-      if (grid[i][j] == 'O') {
-        grid2[i][j_rock] = 'O';
+      if (p[i][j] == 'O') {
+        q[i][j_rock] = 'O';
         j_rock++;
-      } else if (grid[i][j] == '#') {
-        grid2[i][j] = '#';
+      } else if (p[i][j] == '#') {
+        q[i][j] = '#';
         j_rock = j+1;
       }
     }
   }
 }
 
-void roll_south(char ** p, char ** q, unsigned int n, unsigned int m) {
-  char (*grid)[200] = (char (*)[200])p;
-  char (*grid2)[200] = (char (*)[200])q;
-
+void roll_south(char (*p)[200], char (*q)[200], unsigned int n, unsigned int m) {
   reset(q, n, m);
 
   for (unsigned int j=0; j<m; j++) {
     unsigned int i_rock = n-1;
     for (int i=n-1; i>=0; i--) {
-      if (grid[i][j] == 'O') {
-        grid2[i_rock][j] = 'O';
+      if (p[i][j] == 'O') {
+        q[i_rock][j] = 'O';
         i_rock--;
-      } else if (grid[i][j] == '#') {
-        grid2[i][j] = '#';
+      } else if (p[i][j] == '#') {
+        q[i][j] = '#';
         i_rock = i-1;
       }
     }
   }
 }
 
-void roll_east(char ** p, char ** q, unsigned int n, unsigned int m) {
-  char (*grid)[200] = (char (*)[200])p;
-  char (*grid2)[200] = (char (*)[200])q;
-
+void roll_east(char (*p)[200], char (*q)[200], unsigned int n, unsigned int m) {
   reset(q, n, m);
 
   for (unsigned int i=0; i<n; i++) {
     unsigned int j_rock = m-1;
     for (int j=m-1; j>=0; j--) {
-      if (grid[i][j] == 'O') {
-        grid2[i][j_rock] = 'O';
+      if (p[i][j] == 'O') {
+        q[i][j_rock] = 'O';
         j_rock--;
-      } else if (grid[i][j] == '#') {
-        grid2[i][j] = '#';
+      } else if (p[i][j] == '#') {
+        q[i][j] = '#';
         j_rock = j-1;
       }
     }
@@ -186,7 +168,7 @@ int main(int argc, const char* argv[]) {
       MD5Context ctx;
       md5Init(&ctx);
       for (unsigned int i=0; i<n; i++) {
-        md5Update(&ctx, &grid[i], m);
+        md5Update(&ctx, (uint8_t*)&grid[i], m);
       }
       md5Finalize(&ctx);
       // print_hash(ctx.digest);
@@ -199,9 +181,6 @@ int main(int argc, const char* argv[]) {
         }
       }
     }
-
-    // entry[step].b = ctx.digest;
-    // return 0;
   }
   printf("Answer: %u\n", get_load(grid, n, m));
 
