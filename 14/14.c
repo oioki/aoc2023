@@ -171,23 +171,41 @@ int main(int argc, const char* argv[]) {
     return 0;
   }
 
-  for (unsigned int step=0; step<1000000000; step++) {
-    if (step == 85) {
-      step += 93*10752687;
+  uint8_t hash[1000][16];
+
+  int cycle_length = 0;
+  int total_steps = 1000000000;
+  for (unsigned int step=0; step<total_steps; step++) {
+    if (cycle_length > 0) {
+      step += cycle_length * ((total_steps-step)/cycle_length);
     }
+    // printf("step: %u\n", step);
 
     roll_north(grid, grid2, n, m);
     roll_west(grid2, grid, n, m);
     roll_south(grid, grid2, n, m);
     roll_east(grid2, grid, n, m);
 
-    MD5Context ctx;
-    md5Init(&ctx);
-    for (int i=0; i<n; i++) {
-      md5Update(&ctx, &grid[i], m);
+    if (cycle_length == 0) {
+      MD5Context ctx;
+      md5Init(&ctx);
+      for (int i=0; i<n; i++) {
+        md5Update(&ctx, &grid[i], m);
+      }
+      md5Finalize(&ctx);
+      // print_hash(ctx.digest);
+      memcpy(hash[step], ctx.digest, 16);
+
+      for (unsigned int k=0; k<step; k++) {
+        if (memcmp(ctx.digest, hash[k], 16) == 0) {
+          // printf("%d matches %d\n", step, k);
+          cycle_length = step - k;
+        }
+      }
     }
-    md5Finalize(&ctx);
-    // print_hash(ctx.digest);
+
+    // entry[step].b = ctx.digest;
+    // return 0;
   }
   printf("Answer: %u\n", get_load(grid, n, m));
 

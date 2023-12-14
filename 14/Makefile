@@ -4,12 +4,12 @@ solution: 14.c
 	cc 14.c md5.c -Wall -Wextra -o solution
 
 run: solution
-	./solution input.txt
+	./solution input.txt 1
 	./solution input.txt 2
 
 tests: solution
-	./solution example.txt
-	# ./solution example.txt 2
+	./solution example.txt 1
+	./solution example.txt 2
 
 check: cppcheck pvs-studio
 
