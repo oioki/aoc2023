@@ -46,13 +46,12 @@ void reset(char ** p, unsigned int n, unsigned int m) {
   }
 }
 
-unsigned int roll_north(char ** p, char ** q, unsigned int n, unsigned int m) {
+void roll_north(char ** p, char ** q, unsigned int n, unsigned int m) {
   char (*grid)[200] = (char (*)[200])p;
   char (*grid2)[200] = (char (*)[200])q;
 
   reset(q, n, m);
 
-  int result = 0;
   for (unsigned int j=0; j<m; j++) {
     unsigned int i_rock = 0;
     for (unsigned int i=0; i<n; i++) {
@@ -67,13 +66,12 @@ unsigned int roll_north(char ** p, char ** q, unsigned int n, unsigned int m) {
   }
 }
 
-unsigned int roll_west(char ** p, char ** q, unsigned int n, unsigned int m) {
+void roll_west(char ** p, char ** q, unsigned int n, unsigned int m) {
   char (*grid)[200] = (char (*)[200])p;
   char (*grid2)[200] = (char (*)[200])q;
 
   reset(q, n, m);
 
-  int result = 0;
   for (unsigned int i=0; i<n; i++) {
     unsigned int j_rock = 0;
     for (unsigned int j=0; j<n; j++) {
@@ -88,13 +86,12 @@ unsigned int roll_west(char ** p, char ** q, unsigned int n, unsigned int m) {
   }
 }
 
-unsigned int roll_south(char ** p, char ** q, unsigned int n, unsigned int m) {
+void roll_south(char ** p, char ** q, unsigned int n, unsigned int m) {
   char (*grid)[200] = (char (*)[200])p;
   char (*grid2)[200] = (char (*)[200])q;
 
   reset(q, n, m);
 
-  int result = 0;
   for (unsigned int j=0; j<m; j++) {
     unsigned int i_rock = n-1;
     for (int i=n-1; i>=0; i--) {
@@ -109,13 +106,12 @@ unsigned int roll_south(char ** p, char ** q, unsigned int n, unsigned int m) {
   }
 }
 
-unsigned int roll_east(char ** p, char ** q, unsigned int n, unsigned int m) {
+void roll_east(char ** p, char ** q, unsigned int n, unsigned int m) {
   char (*grid)[200] = (char (*)[200])p;
   char (*grid2)[200] = (char (*)[200])q;
 
   reset(q, n, m);
 
-  int result = 0;
   for (unsigned int i=0; i<n; i++) {
     unsigned int j_rock = m-1;
     for (int j=m-1; j>=0; j--) {
@@ -130,7 +126,7 @@ unsigned int roll_east(char ** p, char ** q, unsigned int n, unsigned int m) {
   }
 }
 
-void print_hash(uint8_t *p){
+void print_hash(const uint8_t *p){
     for(unsigned int i = 0; i < 16; ++i){
         printf("%02x", p[i]);
     }
@@ -173,8 +169,8 @@ int main(int argc, const char* argv[]) {
 
   uint8_t hash[1000][16];
 
-  int cycle_length = 0;
-  int total_steps = 1000000000;
+  unsigned int cycle_length = 0;
+  unsigned int total_steps = 1000000000;
   for (unsigned int step=0; step<total_steps; step++) {
     if (cycle_length > 0) {
       step += cycle_length * ((total_steps-step)/cycle_length);
@@ -189,7 +185,7 @@ int main(int argc, const char* argv[]) {
     if (cycle_length == 0) {
       MD5Context ctx;
       md5Init(&ctx);
-      for (int i=0; i<n; i++) {
+      for (unsigned int i=0; i<n; i++) {
         md5Update(&ctx, &grid[i], m);
       }
       md5Finalize(&ctx);
