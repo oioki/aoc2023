@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int mode = 1;
+#define SIZE 500
 
-void print(const char (*g)[350], unsigned int n, unsigned int m) {
+void print(const char (*g)[SIZE], unsigned int n, unsigned int m) {
   for (unsigned int i=0; i<n; i++) {
     for (unsigned int j=0; j<m; j++) {
       printf("%c", g[i][j]);
@@ -17,7 +17,7 @@ void print(const char (*g)[350], unsigned int n, unsigned int m) {
 
 int main(int argc, const char* argv[]) {
   if (argc < 2) {
-    printf("Usage: %s input.txt [mode]\n", argv[0]);
+    printf("Usage: %s input.txt\n", argv[0]);
     return 1;
   }
 
@@ -27,65 +27,64 @@ int main(int argc, const char* argv[]) {
     return 2;
   }
 
-  int mode = 1;
-  if (argc > 2) {
-    mode = atoi(argv[2]);
-  }
-
-  char g[275][350];
-  for (unsigned int i=0; i<275; i++)
-  for (unsigned int j=0; j<350; j++)
+  char g[SIZE][SIZE];
+  for (unsigned int i=0; i<SIZE; i++)
+  for (unsigned int j=0; j<SIZE; j++)
     g[i][j] = '.';
 
-  int i = 250;
-  int j = 130;
-  g[250][130] = '#';
+  int icur = SIZE / 2;
+  int jcur = SIZE / 2;
+  g[icur][jcur] = '#';
 
-  int imin = 0;
-  int imax = 0;
-  int jmin = 0;
-  int jmax = 0;
-
-  int result = 0;
   while (!feof(f)) {
     char direction;
     int l;
     char rgb[7];
     fscanf(f, "%c %d (#%6s)\n", &direction, &l, rgb);
-    printf("[%c][%d][%s]\n", direction, l, rgb);
 
     if (direction == 'L') {
+      if (jcur - l < 0) {
+        printf("Canvas is too small, attempted overflow at %d,%d.\n", icur, jcur - l);
+        return 4;
+      }
+
       for(int dj=1; dj<=l; dj++)
-        j--;
-        // g[i][j--] = '#';
-      if (j<jmin) jmin = j;
+        g[icur][jcur--] = '#';
     }
     if (direction == 'R') {
+      if (jcur + l >= SIZE) {
+        printf("Canvas is too small, attempted overflow at %d,%d.\n", icur, jcur + l);
+        return 4;
+      }
+
       for(int dj=1; dj<=l; dj++)
-        // g[i][j++] = '#';
-        j++;
-      if (j>jmax) jmax = j;
+        g[icur][jcur++] = '#';
     }
     if (direction == 'D') {
+      if (icur + l >= SIZE) {
+        printf("Canvas is too small, attempted overflow at %d,%d.\n", icur + l, jcur);
+        return 4;
+      }
+
       for(int di=1; di<=l; di++)
-        // g[i++][j] = '#';
-      i++;
-      if (i>imax) imax=i;
+        g[icur++][jcur] = '#';
     }
     if (direction == 'U') {
+      if (icur - l < 0) {
+        printf("Canvas is too small, attempted overflow at %d,%d.\n", icur - l, jcur);
+        return 4;
+      }
+
       for(int di=1; di<=l; di++)
-        // g[i--][j] = '#';
-        i--;
-      if (i<imin) imin = i;
+        g[icur--][jcur] = '#';
     }
-
-
-    result += 1;
   };
 
+
+  // find the inside
   bool found_interior = false;
-  for(int i=0; i<275; i++) {
-    for(int j=0; j<350; j++) {
+  for(int i=1; i<SIZE-2; i++) {
+    for(int j=1; j<SIZE-2; j++) {
       if ( (g[i][j] == '.') && (g[i][j+1] == '#') && (g[i][j+2] == '.') )
       {
         g[i][j+2] = 'p';
@@ -97,24 +96,29 @@ int main(int argc, const char* argv[]) {
     if (found_interior) break;
   }
 
+
+  // paint iteratively
   while(true) {
     bool painted_something = false;
-    for(int i=0; i<275; i++) {
-      for(int j=0; j<350; j++) {
+    for(int i=1; i<SIZE-1; i++) {
+      for(int j=1; j<SIZE-1; j++) {
         if ( g[i][j] == 'p' ) {
-          if ( (i>0) && (g[i-1][j] == '.') ) {
+          if ( g[i-1][j] == '.' ) {
             painted_something = true;
             g[i-1][j] = 'p';
           }
-          if ( (i<500) && (g[i+1][j] == '.') ) {
+
+          if ( g[i+1][j] == '.' ) {
             painted_something = true;
             g[i+1][j] = 'p';
           }
-          if ( (j>0) && (g[i][j-1] == '.') ) {
+
+          if ( g[i][j-1] == '.' ) {
             painted_something = true;
             g[i][j-1] = 'p';
           }
-          if ( (j<500) && (g[i][j+1] == '.') ) {
+
+          if ( g[i][j+1] == '.' ) {
             painted_something = true;
             g[i][j+1] = 'p';
           }
@@ -125,14 +129,11 @@ int main(int argc, const char* argv[]) {
     if (!painted_something) break;
   }
 
-
-  // g[250][130] = 'X';
-  // printf("i = [%d,%d]\nj = [%d,%d]\n", imin, imax, jmin, jmax);
-  print(g, 275, 350);
+  // print(g, SIZE, SIZE);
 
   int painted = 0;
-  for(int i=0; i<275; i++)
-  for(int j=0; j<350; j++)
+  for(int i=0; i<SIZE; i++)
+  for(int j=0; j<SIZE; j++)
     if ( (g[i][j] == '#') || (g[i][j] == 'p') ) painted++;
   printf("Answer: %d\n", painted);
 

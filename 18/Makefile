@@ -1,15 +1,18 @@
 all: tests run
 
-solution: 18.c
-	cc 18.c -Wall -Wextra -o solution
+solution1: 18.c
+	cc 18.c -Wall -Wextra -o solution1
 
-run: solution
-	# ./solution input.txt
-	# ./solution input.txt 2
+solution2: 18-2.c
+	cc 18-2.c -Wall -Wextra -o solution2
 
-tests: solution
-	./solution example.txt
-	# ./solution example.txt 2
+run: solution1 solution2
+	./solution1 input.txt
+	# ./solution2 input.txt
+
+tests: solution1 solution2
+	./solution1 example.txt
+	# ./solution2 example.txt
 
 check: cppcheck pvs-studio
 
