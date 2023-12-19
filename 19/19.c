@@ -1,29 +1,42 @@
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-int mode = 1;
+int ixmas(char c) {
+  if (c=='x') return 0;
+  if (c=='m') return 1;
+  if (c=='a') return 2;
+  return 3;  // 's'
+}
 
 int main(int argc, const char* argv[]) {
-  if (argc < 2) {
-    printf("Usage: %s input.txt [mode]\n", argv[0]);
+  if (argc < 3) {
+    printf("Usage: %s input.txt ranges.txt\n", argv[0]);
     return 1;
   }
 
   FILE * f = fopen(argv[1], "r");
   if (f == NULL) {
-    printf("Error opening file: %s\n", argv[1]);
+    printf("Error opening input file: %s\n", argv[1]);
     return 2;
   }
 
-  if (argc > 2) {
-    mode = atoi(argv[2]);
+  FILE * fr = fopen("ranges.txt", "w");
+  if (fr == NULL) {
+    fclose(f);
+    printf("Error opening ranges file: %s\n", argv[1]);
+    return 3;
   }
 
+  // 4 indices are: x m a s
+  int n_ranges[4] = {1,1,1,1};
+  int ranges[4][500];
+  ranges[0][0] = 1;
+  ranges[1][0] = 1;
+  ranges[2][0] = 1;
+  ranges[3][0] = 1;
 
-  printf("#include <stdio.h>\n");
-  printf("#include \"1.h\"\n");
+  printf("#include \"lib.h\"\n\n");
 
   while (!feof(f)) {
     char s[200];
@@ -35,7 +48,7 @@ int main(int argc, const char* argv[]) {
     if (fgets(s, 199, f) == NULL) {
         break;
     }
-    if (strlen(s) == 1) break;
+    if (s[0] == '\n') break;
 
     int i = 0;
     int pi;
@@ -47,10 +60,21 @@ int main(int argc, const char* argv[]) {
     fprintf(stderr, "int %s(int x, int m, int a, int s);\n", function_name);
     pi = i;
 
-    while(true) {
+    while(1) {
       if (s[i] == ':') {
         strncpy(condition, &s[pi], i-pi);
         condition[i-pi] = '\0';
+
+        int ix = ixmas(condition[0]);
+        int number = atoi(&condition[2]);
+        int in = n_ranges[ix];
+        if (condition[1] == '>') {
+          ranges[ix][in] = number + 1;
+        } else { // '<'
+          ranges[ix][in] = number;
+        }
+        n_ranges[ix]++;
+
         printf("  if (%s) return ", condition);
         pi = ++i;
       } else if (s[i] == ',') {
@@ -75,7 +99,7 @@ int main(int argc, const char* argv[]) {
         } else {
           printf("%s(x,m,a,s);\n", final);
         }
-        printf("}\n\n");
+        printf("}\n");
         break;
       }
       i++;
@@ -83,15 +107,10 @@ int main(int argc, const char* argv[]) {
   };
 
 
-  printf("int main(int argc, char* argv[]) {\n");
-  printf("  int result = 0;\n");
-  while (!feof(f)) {
-    int x, m, a, s;
-    fscanf(f, "{x=%d,m=%d,a=%d,s=%d}\n", &x, &m, &a, &s);
-    printf("  result += in(%d,%d,%d,%d) * (%d+%d+%d+%d);\n", x,m,a,s, x,m,a,s);
-  }
-  printf("  printf(\"Answer: %%d\\n\", result);\n");
-  printf("}\n");
+  for (int ii=0; ii<4; ii++)
+  for (int ix=0; ix<n_ranges[ii]; ix++)
+    fprintf(fr, "%d %d\n", ii, ranges[ii][ix]);
+  fclose(fr);
 
   return 0;
 }

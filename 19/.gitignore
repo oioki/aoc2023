@@ -1,4 +1,5 @@
-1.c
-1.h
-example-1
-solution-1
+generator
+lib.*
+ranges.txt
+example
+solution
